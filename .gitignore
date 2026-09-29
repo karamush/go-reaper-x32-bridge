@@ -1,0 +1,30 @@
+# ------------------------------------------------------------- build output ----
+# tools/build.ps1 writes the command binaries here
+bin/
+# goreleaser writes the release archives here (see .goreleaser.yml, make snapshot)
+dist/
+# tools/difftest.ps1 scratch: binaries, emulator run directories, captured logs
+build/
+
+# --------------------------------------------------------------------- Go ------
+*.exe
+*.exe~
+*.dll
+*.dylib
+*.so
+*.test
+*.out
+
+# ----------------------------------------------------------- runtime state -----
+# written by the emulator on /shutdown (see -res); machine specific, never shared
+.X32res.rc
+*.X32res.rc
+
+# ---------------------------------------------------------------- editors/OS ---
+.vscode/
+.idea/
+*.swp
+*~
+Thumbs.db
+desktop.ini
+.DS_Store

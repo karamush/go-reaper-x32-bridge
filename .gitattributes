@@ -1,0 +1,27 @@
+# ------------------------------------------------------------ line endings -----
+# Normalise on commit, check out native (Windows users get CRLF in scripts).
+* text=auto
+
+*.go    text eol=lf
+*.md    text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.ps1   text eol=crlf
+# GNU make chokes on CRLF in a recipe line, so this one stays LF everywhere.
+Makefile text eol=lf
+
+*.exe   binary
+*.zip   binary
+
+# ------------------------------------------------------------ generated files --
+# Written by tools/gen_tables.ps1 and tools/gen_appendix.ps1. They are committed
+# on purpose (they are the protocol catalogue, useful without the C sources), but
+# they are generated: keep them out of the language stats and out of diffs
+# (tables_gen.go alone is ~1.3 MB of one-line table entries).
+emulator/internal/x32/types_gen.go  linguist-generated=true -diff
+emulator/internal/x32/enums_gen.go  linguist-generated=true -diff
+emulator/internal/x32/tables_gen.go linguist-generated=true -diff
+emulator/internal/x32/sets_gen.go   linguist-generated=true -diff
+docs/x32_commands.json              linguist-generated=true -diff
+docs/x32_enums.json                 linguist-generated=true -diff
+docs/APPENDIX_COMMANDS.md           linguist-generated=true -diff

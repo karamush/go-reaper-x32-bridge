@@ -1,0 +1,56 @@
+X32 OSC emulator and X32 <-> REAPER bridge (Go)
+Copyright (C) 2026 karamush
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+The full text of the license is in the LICENSE file of this repository.
+
+===============================================================================
+Derivative work of the X32-Behringer project
+===============================================================================
+
+    Upstream project : https://github.com/pmaillot/X32-Behringer
+    Author           : Patrick-Gilles Maillot
+    License          : GNU GPL version 3 or later
+
+Everything below is derived from that project, which is why this repository is
+licensed under the GPLv3 (or later) as well:
+
+* `emulator/` is a Go port of `X32.c` v0.88 ("X32 - An X32 Emulator", the
+  reference emulator of that project) and of the OSC helpers of `X32lib/`
+  (`Xsprint`, `Xcparse`, `Xdump`, `X32Connect`, `validateIP4Dotted`) and of the
+  X32Libs.h declarations.
+
+* The command catalogue is mechanically extracted from the command table headers
+  of that project (`X32Channel.h`, `X32CfgMain.h`, `X32PrefStat.h`, `X32Auxin.h`,
+  `X32Fxrtn.h`, `X32Bus.h`, `X32Mtx.h`, `X32Dca.h`, `X32Fx.h`, `X32Output.h`,
+  `X32Headamp.h`, `X32Show.h`, `X32Misc.h`, `X32Libs.h`) and lives in:
+    - `emulator/internal/x32/types_gen.go`
+    - `emulator/internal/x32/enums_gen.go`
+    - `emulator/internal/x32/tables_gen.go`
+    - `emulator/internal/x32/sets_gen.go`
+    - `docs/x32_commands.json`, `docs/x32_enums.json`
+    - `docs/APPENDIX_COMMANDS.md`
+
+* `bridge/` is a re-implementation of the engine of `X32ReaperW.c` v2.86
+  (same project), a two way OSC bridge between an X32 and REAPER; the address
+  tables, the bank/DCA model and the REAPER side of the protocol come from there.
+
+* `docs/X32_OSC_PROTOCOL.md` and `docs/X32_REAPER_BRIDGE.md` document the
+  behaviour of those C programs; the oscilloscope readings, address tables and
+  value scales they describe are derived from reading their source.
+
+The upstream C sources and the prebuilt `X32-emulator.exe` are **not** part of
+this repository: only this Go implementation and its documentation are.
+See the "Credits" section of README.md for how to obtain them.

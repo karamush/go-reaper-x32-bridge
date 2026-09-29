@@ -1,0 +1,152 @@
+version: 2
+
+# Release configuration: pushing a v* tag builds the five commands for Linux,
+# macOS and Windows and publishes them on the GitHub release page.
+#
+# Local dry run (no tag, nothing published):
+#
+#     make snapshot          # or: goreleaser release --clean --snapshot
+#     ls dist/
+#
+# The repository is a Go workspace over two modules (emulator/ and bridge/) and has
+# no go.mod at the root: GoReleaser builds from the root through go.work, which is
+# why every build names its main package with a full path (./emulator/cmd/...).
+
+project_name: x32-reaper-bridge
+
+builds:
+  - id: x32emu
+    main: ./emulator/cmd/x32emu
+    binary: x32emu
+    <<: &build_defaults
+      env:
+        - CGO_ENABLED=0
+      flags:
+        - -trimpath
+      goos:
+        - linux
+        - darwin
+        - windows
+      goarch:
+        - "386"
+        - amd64
+        - arm
+        - arm64
+      ignore:
+        - goos: darwin
+          goarch: "386"
+        - goos: darwin
+          goarch: arm
+        - goos: windows
+          goarch: arm
+      ldflags:
+        - -s -w
+        - -X main.version={{ .Version }}
+        - -X main.commit={{ .Commit }}
+        - -X main.date={{ .Date }}
+      mod_timestamp: "{{ .CommitTimestamp }}"
+  - id: x32probe
+    main: ./emulator/cmd/x32probe
+    binary: x32probe
+    <<: *build_defaults
+  - id: x32reaper
+    main: ./bridge/cmd/x32reaper
+    binary: x32reaper
+    <<: *build_defaults
+  - id: x32bridge
+    main: ./bridge/cmd/x32bridge
+    binary: x32bridge
+    <<: *build_defaults
+  - id: x32listen
+    main: ./bridge/cmd/x32listen
+    binary: x32listen
+    <<: *build_defaults
+
+# One archive per platform holding all five commands plus the documentation.
+archives:
+  - id: x32-reaper-bridge
+    ids:
+      - x32emu
+      - x32probe
+      - x32reaper
+      - x32bridge
+      - x32listen
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    wrap_in_directory: true
+    files:
+      - LICENSE
+      - NOTICE
+      - README.md
+      - CHANGELOG.md
+      - docs/X32_OSC_PROTOCOL.md
+      - docs/X32_REAPER_BRIDGE.md
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+
+release:
+  prerelease: auto
+  draft: false
+  # A re-run for the same tag (a corrected tag, a re-fired workflow) finds the
+  # release already there: with the defaults GoReleaser keeps the old body and
+  # fails with GitHub's 422 "already_exists" on every archive name, so replace
+  # the notes and overwrite the assets instead.
+  mode: replace
+  replace_existing_artifacts: true
+  # The header introduces the project and the footer how to run it, so both are
+  # the same on every release; the generated changelog sits in between (and
+  # CHANGELOG.md keeps the curated notes of each version).
+  header: |
+    **X32 OSC emulator + X32 <-> REAPER bridge in Go** - drive REAPER from
+    Mixing Station, X32-Edit or a real Behringer X32.
+
+    One process provides both halves: a console the mixer apps connect to on UDP
+    port 10023, and a bridge between it and REAPER's OSC control surface.
+
+    Every archive below holds all five commands (`x32reaper`, `x32emu`,
+    `x32bridge`, `x32probe`, `x32listen`), the README, both protocol documents,
+    the licence and the attribution notice. Check a download with
+    `sha256sum -c checksums.txt` (or `Get-FileHash` on Windows).
+  footer: |
+    ## Getting started
+
+    ```bash
+    # console on 0.0.0.0:10023 + bridge (REAPER listens on 8000, our socket is 9000)
+    ./x32reaper -listen 0.0.0.0:9000
+    ```
+
+    In REAPER, *Preferences > Control/OSC/web*: add an **OSC (Open Sound
+    Control)** surface with local listen port **8000** and send to
+    **<this machine>:9000** (pattern config `Default.ReaperOSC`). Then connect
+    Mixing Station or X32-Edit to **<this machine>:10023**.
+
+    * `x32reaper -h` lists every flag: `-name`, `-i` and `-x32port` configure the
+      console, `-bank`, `-trkmin/-trkmax`, `-tox32/-toreaper` and `-meters` the
+      bridge (`-emu 0` uses a real console instead of the built-in one).
+    * `docs/X32_OSC_PROTOCOL.md` is the full protocol reference (enough to write
+      another implementation), `docs/X32_REAPER_BRIDGE.md` covers the bridge.
+    * Nothing is logged unless asked for: `-v` on the bridge, `-v 1` on the
+      console.
+
+    Licensed under the **GNU GPL v3 or later**. This is a derivative work of the
+    **X32-Behringer** project by Patrick-Gilles Maillot
+    (<https://github.com/pmaillot/X32-Behringer>); `NOTICE` says exactly what is
+    derived from what.
