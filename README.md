@@ -27,6 +27,16 @@ Standard library only, no dependencies, one process, command line flags only.
                                           └──────── OSC/UDP ────────────────────────>│ 127.0.0.1:8000
 ```
 
+## Demo
+
+[![Mixing Station on a phone driving REAPER through the emulated X32](docs/media/ReaperX32BridgeDemo-poster.jpg)](https://karamush.ru/ReaperX32BridgeDemo.mp4)
+
+One minute, no audio: Mixing Station (Android) finds the console, pulls REAPER's
+track names and metres out of it, renames channel 01 through the scribble strip
+- the new name appears in REAPER and in a second Mixing Station instance at the
+same time - and switches channel banks. REAPER on the right, `x32reaper` in
+between, nothing else running.
+
 ## Features
 
 Emulator (`x32emu`, also built into `x32reaper`):
@@ -194,6 +204,7 @@ pwsh -File tools/gen_appendix.ps1
 | `docs/X32_REAPER_BRIDGE.md` | the bridge reference: address tables both ways, mapping rules, REAPER setup, what REAPER sends and when, meters, deviations from the C tool |
 | `docs/APPENDIX_COMMANDS.md` | generated: every table, every command, its type and enum list |
 | `docs/x32_commands.json`, `docs/x32_enums.json` | the same catalogue in machine readable form (for code generation in any language) |
+| `docs/media/` | the demo video (`ReaperX32BridgeDemo.mp4`, 1280x720 H.264, 1.4 MB, no audio) and its poster frame |
 | `tools/` | `build.ps1` (the Windows build script), `gen_tables.ps1`, `gen_appendix.ps1`, `difftest.ps1` |
 | `Makefile` | the universal build entry point: `make build`, `make test`, `make check`, `make snapshot` |
 | `.goreleaser.yml` | release configuration: the five commands for Linux/macOS/Windows |

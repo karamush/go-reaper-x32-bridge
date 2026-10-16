@@ -25,3 +25,10 @@ emulator/internal/x32/sets_gen.go   linguist-generated=true -diff
 docs/x32_commands.json              linguist-generated=true -diff
 docs/x32_enums.json                 linguist-generated=true -diff
 docs/APPENDIX_COMMANDS.md           linguist-generated=true -diff
+
+# -------------------------------------------------------------------- media ----
+# The demo video and its poster (see the Demo section of README.md). Binary:
+# never convert line endings, never show a diff, keep them out of the language
+# statistics.
+*.mp4  binary
+*.jpg  binary

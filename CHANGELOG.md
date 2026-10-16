@@ -7,6 +7,13 @@ project uses [semantic versioning](https://semver.org/).
 The Go modules are `x32emu` (the console, `emulator/`) and `x32bridge` (the
 bridge and its commands, `bridge/`); they are versioned together.
 
+## [Unreleased]
+
+### Documentation
+
+* `README.md`: a demo video (Mixing Station on a phone driving REAPER through the
+  bridge) with a poster frame, in `docs/media/`.
+
 ## [0.1.0] - 2026-09-30
 
 First public release: the X32 emulator, the REAPER bridge and the full protocol
